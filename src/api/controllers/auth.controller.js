@@ -97,7 +97,7 @@ exports.sendPasswordReset = async (req, res, next) => {
     const user = await User.findOne({ email }).exec();
 
     if (user) {
-      const passwordResetObj = await PasswordResetToken.generate(user);
+      await PasswordResetToken.generate(user);
       res.status(httpStatus.OK);
       return res.json('success');
     }
