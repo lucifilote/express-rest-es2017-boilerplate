@@ -9,7 +9,6 @@ const User = require('../../models/user.model');
 const RefreshToken = require('../../models/refreshToken.model');
 const PasswordResetToken = require('../../models/passwordResetToken.model');
 const authProviders = require('../../services/authProviders');
-const emailProvider = require('../../services/emails/emailProvider');
 
 const sandbox = sinon.createSandbox();
 
@@ -380,10 +379,6 @@ describe('Authentication API', () => {
         .add(1, 'hour')
         .toDate());
 
-      sandbox
-        .stub(emailProvider, 'sendPasswordReset')
-        .callsFake(() => Promise.resolve('email sent'));
-
       return request(app)
         .post('/v1/auth/send-password-reset')
         .send({ email: dbUser.email })
@@ -425,10 +420,6 @@ describe('Authentication API', () => {
   describe('POST /v1/auth/reset-password', () => {
     it('should update password and send confirmation email when email and reset token are valid', async () => {
       await PasswordResetToken.create(resetToken);
-
-      sandbox
-        .stub(emailProvider, 'sendPasswordChangeEmail')
-        .callsFake(() => Promise.resolve('email sent'));
 
       return request(app)
         .post('/v1/auth/reset-password')
